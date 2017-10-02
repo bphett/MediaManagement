@@ -1,0 +1,45 @@
+#!/bin/bash
+# script to push new files to google drive
+
+
+#Variables
+gdrivefile=/media/MediaServer/MediaServerFiles/gdrive.txt
+gdrivequeue=$(cat $gdrivefile)
+runningfile=/media/MediaServer/MediaServerFiles/driverunning.txt
+
+#Logic
+IFSOLD=$IFS
+IFS=$'\n:'
+
+if [ ! -f $runningfile ]; then
+   echo "Running" >> $runningfile
+   for file in $gdrivequeue; do
+      filename=$(basename $file)
+      #Determine if it is a movie.
+      if [[ $file == *"/Movies/"* ]]; then
+         echo "Movie is: $file"
+         foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/Movies\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
+         foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
+         file2=${file::-4}
+         /home/jason/gopath/bin/drive push -quiet $file2*
+         sed -e 's,'"$file"',,g' -i $gdrivefile
+         sed -e 's/^:*//' -i $gdrivefile
+         chmod a+w $gdrivefile
+      fi
+      #Determine if it is a show.
+      if [[ $file == *"/TV Shows"* ]] && [ $file != "" ]; then
+         echo "Show is: $file"
+         foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/TV Shows\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
+         foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
+         file2=${file::-4}
+         /home/jason/gopath/bin/drive push -quiet $file2*
+         sed -e 's,'"$file"',,g' -i $gdrivefile
+         sed -e 's/^:*//' -i $gdrivefile
+         chmod a+w $gdrivefile
+      fi
+   done
+   rm $runningfile
+fi
+
+IFS=$IFSOLD
+exit

@@ -1,0 +1,8 @@
+#!/bin/sh
+# script to rotate the trailer for Plex
+# disabled due to plex pass
+
+trailerpath=$(find /media/MediaServer/Trailers/ -type f -name "*-trailer.*" | shuf -n1)
+filepath="/media/MediaServer/Movies/Now In Theaters/Now In Theaters.mp4"
+
+#cp -f "$trailerpath" "$filepath"

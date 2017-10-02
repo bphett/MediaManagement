@@ -1,0 +1,38 @@
+#!/bin/bash
+# This script will check for new movie requests from the web, and add them to CouchPotato.
+
+requestfile=/media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
+newrequestfile=/media/MediaServer/MediaServerFiles/MSShared/newrequests.txt
+input=`echo $1 | sed 's/ /+/g'`
+sofa_api="8c3d1078864741b4a11d29bd165c9020" #CouchPotato APIkey See $sofa_host/docs/
+sofa_host="http://localhost:5050" #Usually this.
+tmdb_api="933591b9b4cdc83522498a15bcc366fa"
+
+parse_requests() {
+requests=$(cat $requestfile)
+newrequests=$requests
+IFSOld=$IFS
+IFS="|"
+for title in $requests; do
+	IFS=$'\n'
+	/home/addmovie $title
+	wishlist=$(/home/addmovie wishlist)
+	shopt -s nocasematch
+	for item in $wishlist; do
+		if [[ $item = $title ]]; then
+			newrequests=$(echo $newrequests | sed "s/$title\|//" | sed "s/$title//")
+		fi
+	done
+	IFS="|"
+	shopt -u nocasematch
+done
+IFS=$IFSOld
+newrequests=$(echo "$newrequests" | sed "s/^|\+//" | sed "s/|\+$//" | sed "s/||\+//g")
+#echo $newrequests > $newrequestfile
+#echo $newrequests > $requestfile
+rm -f $requestfile
+}
+
+
+if [ ! -e $requestfile ];then echo "No requests at this time.";exit 0;else:;fi
+parse_requests

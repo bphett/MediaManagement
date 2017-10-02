@@ -1,0 +1,18 @@
+#!/bin/sh
+# script to create a listing of movies in the library
+
+MOVIEDIR=/media/MediaServer/Movies # the folder movies are in
+MOVIEDIR2=/media/MediaServer/OtherHouseMedia/Cy-Movies # the folder movies are in
+LIST=/media/MediaServer/MediaServerFiles/MSShared/movielist.txt
+IFSOLD=$IFS
+
+IFS=::
+rm -rf $LIST
+#for i in $(ls -d $MOVIEDIR/*/); do echo ${i%%/}; echo ","; done >> $LIST
+for i in $(find $MOVIEDIR -type d); do echo ${i%%/}; done >> $LIST
+for i in $(find $MOVIEDIR2 -type d); do echo ${i%%/}; done >> $LIST
+sed -i 's/\/media\/MediaServer\/Movies\//,/g' $LIST
+sed -i 's/\/media\/MediaServer\/OtherHouseMedia\/Cy-Movies\//,/g' $LIST
+sed -i 's/\/media\/MediaServer\/Movies//g' $LIST
+sed -i 's/\/media\/MediaServer\/OtherHouseMedia\/Cy-Movies//g' $LIST
+IFS=$IFSOLD

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Rotates media server logs
+Today=$(date +"%Y-%m-%d")
+LogDir=""
+
+LogFiles=/media/MediaServer/MediaServerFiles/Logs/*.txt
+
+for log in $LogFiles
+do
+filename=$(basename $log)
+#echo ${Today}-${filename} >> /media/MediaServer/testlog.txt
+mv -u $log /media/MediaServer/MediaServerFiles/Logs/Archived/${Today}-${filename}
+done

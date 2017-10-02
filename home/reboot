@@ -1,0 +1,85 @@
+#!/bin/sh
+# script to check for complete torrents in transmission folder, then
+# stop and move them
+
+# either hard-code the MOVEDIR variable here…
+MOVEDIR=/media/MediaServer/MediaServerFiles/CompletedTorrents # the folder to move completed downloads to
+# …or set MOVEDIR using the first command-line argument
+# MOVEDIR=%1
+DELDIR=/media/MediaServer/MediaServerFiles/Delete
+PROCDIR=/media/MediaServer/MediaServerFiles/Processing
+TEMPDIR=/media/MediaServer/MediaServerFiles/Temporary
+LOSTDIR=/media/MediaServer/NewFiles/LostFiles
+
+# logs all output to log file
+LOGFILE=/media/MediaServer/MediaServerFiles/Logs/boot-log.txt # the log file to use
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3
+exec >> $LOGFILE 2>&1 # everything below this line will be logged
+# echo 'Logging Started ... '
+
+# use transmission-remote to get torrent list from transmission-remote list
+# use sed to delete first / last line of output, and remove leading spaces
+# use cut to get first field from each line
+sleep 30
+TORRENTLIST=$(transmission-remote --auth=jaycee5585:jedihunter --list | sed -e '1d;$d;s/^ *//' | cut --only-delimited --delimiter=' ' --fields=1)
+echo " ***** TORRENT LIST is "
+echo $TORRENTLIST
+echo " *****     "'\r'
+# for each torrent in the list
+for TORRENTID in $TORRENTLIST
+do
+  TORRENTID=$(echo $TORRENTID | sed 's:*::')
+  # removes asterisk * from torrent ID# which had error associated with it
+  echo "***** Operations on torrent ID $TORRENTID starting. *****  "'\r'
+  # check if torrent download is completed
+  DL_COMPLETED=$(transmission-remote --auth=jaycee5585:jedihunter --torrent $TORRENTID --info | grep "Percent Done: 100%")
+#  echo "DL_COMPLETED is $DL_COMPLETED"'\r'
+  # check torrent’s current state is “Stopped”, “Finished”, or “Idle”
+  STATE_STOPPED=$(transmission-remote --auth=jaycee5585:jedihunter --torrent $TORRENTID --info | grep "State: Finished")
+#  echo "STATE_STOPPED is $STATE_STOPPED"'\r'
+  # check if state is "Seeding"
+  RATIO=$(transmission-remote --auth=jaycee5585:jedihunter --torrent $TORRENTID --info | grep "Ratio:" | sed 's/  Ratio: //' | printf "%.0f\n" )
+#  echo "RATIO is $RATIO"'\r'
+  LOCATION=$(transmission-remote --auth=jaycee5585:jedihunter --torrent $TORRENTID --info | grep "Location:" )
+  echo "LOCATION is $LOCATION"'\r'
+
+  # if the torrent is in the Processing Folder…
+  case "$LOCATION" in
+      *"$PROCDIR"*)
+         echo "Moving files to processing directory. "'\r'
+         transmission-remote 9091 --auth=jaycee5585:jedihunter --torrent $TORRENTID --move $PROCDIR/$TORRENTID
+         wait
+         echo ""'\r'
+         ;;
+      *)
+         echo "Torrent not in Processing Directory."'\r'
+         ;;
+  esac
+  case "$LOCATION" in
+      *"$MOVEDIR"*)
+         echo "Moving files to completed directory. "'\r'
+         transmission-remote 9091 --auth=jaycee5585:jedihunter --torrent $TORRENTID --move $MOVEDIR/$TORRENTID
+         wait
+         echo ""'\r'
+         ;;
+      *) echo "Torrent not in Completed Directory."'\r'
+         ;;
+  esac
+echo "***** Operations on torrent ID $TORRENTID completed. *****     "'\r'
+
+done
+
+#delete empty folders
+echo " "'\r'
+echo "Deleting empty folders..."'\r'
+
+find $PROCDIR/* -type d -empty -delete
+find $MOVEDIR/* -type d -empty -delete
+
+echo " "'\r'
+echo " "'\r'
+
+/home/torrentcleanup
+/etc/cron.hourly/postproc
+/home/movielist

@@ -1,0 +1,20 @@
+#!/bin/bash
+# This script will fetch any missing trailers for the Movies library.
+# Disabled due to Plex Pass
+
+#exit
+
+# Variables
+MovieDirectory="/media/MediaServer/Movies"
+now="$(date)"
+logfile="/media/MediaServer/MediaServerFiles/Logs/trailerlog.txt"
+testDirectory="/media/MediaServer/Movies/Easy A (2010)"
+
+#echo -e "\r" >> $logfile
+
+# This finds movie's imdb link (imdbpath) and folder path (mpath), checks to
+# see if trailer exists, and downloads it if needed.
+#/home/gettrailer.sh ALL >> $logfile
+
+#echo "Trailers pulled at $now" >> $logfile
+#echo -e "\r" >> $logfile

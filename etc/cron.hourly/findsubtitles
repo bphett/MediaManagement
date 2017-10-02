@@ -1,0 +1,21 @@
+#!/bin/bash
+#This script will find missing subtitles for the Movies folder and
+#the TV Shows folder and download them from Opensubtitles.org.
+
+#Variables
+TVDirectory="/media/MediaServer/TV Shows"
+MovieDirectory="/media/MediaServer/Movies"
+logfile="/media/MediaServer/MediaServerFiles/logs/subtitlelog.txt"
+now=$(date)
+
+echo -e "\r" >> $logfile
+echo "Checking for subtitles at $now." >> $logfile
+echo -e "\r" >> $logfile
+
+#Movies folder
+filebot -script fn:suball "$MovieDirectory" --lang en 2>> $logfile
+echo -e "\r" >> $logfile
+
+#TV Shows folder
+filebot -script fn:suball "$TVDirectory" --lang en 2>> $logfile
+echo -e "\r" >> $logfile
