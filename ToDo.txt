@@ -1,0 +1,5 @@
+install drive to /home/gopath/bin/
+install go
+install sickrage
+install couchpotato
+install transmission

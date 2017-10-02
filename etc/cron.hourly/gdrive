@@ -21,7 +21,7 @@ if [ ! -f $runningfile ]; then
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/Movies\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
          file2=${file::-4}
-         /home/jason/gopath/bin/drive push -quiet $file2*
+         /home/gopath/bin/drive push -quiet $file2*
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile
@@ -32,7 +32,7 @@ if [ ! -f $runningfile ]; then
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/TV Shows\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
          file2=${file::-4}
-         /home/jason/gopath/bin/drive push -quiet $file2*
+         /home/gopath/bin/drive push -quiet $file2*
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile

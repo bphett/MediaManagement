@@ -1,4 +1,4 @@
-#!/bin/sh
+﻿#!/bin/sh
 # script to check for complete torrents in transmission folder, then
 # stop and move them
 
@@ -73,7 +73,7 @@ do
 
 if [ "$LOCATION" = "  Location: $PROCDIR/$TORRENTID" ]; then
 
-#sudo filebot -script /home/jason/scripts/amc.groovy --output "/media/MediaServer/NewFiles" --log-file '/media/MediaServer/MediaServerFiles/Logs/amc-log.txt' --action copy -non-strict "$PROCDIR/$TORRENTID" --def "seriesFormat=/media/MediaServer/NewFiles/{n} ({y})/{'Season '+s}/{n} - {s00e00} - {t} - HDTV {vf} {vc}" >> /media/MediaServer/MediaServerFiles/check$TORRENTID.txt
+#sudo filebot -script /home/scripts/amc.groovy --output "/media/MediaServer/NewFiles" --log-file '/media/MediaServer/MediaServerFiles/Logs/amc-log.txt' --action copy -non-strict "$PROCDIR/$TORRENTID" --def "seriesFormat=/media/MediaServer/NewFiles/{n} ({y})/{'Season '+s}/{n} - {s00e00} - {t} - HDTV {vf} {vc}" >> /media/MediaServer/MediaServerFiles/check$TORRENTID.txt
 sudo filebot -script fn:amc --output "/media/MediaServer/NewFiles" --log-file '/media/MediaServer/MediaServerFiles/Logs/amc-log.txt' --action copy -non-strict "$PROCDIR/$TORRENTID" --def "seriesFormat=/media/MediaServer/NewFiles/{n} ({y})/{'Season '+s}/{n} - {s00e00} - {t} - HDTV {vf} {vc}" >> /media/MediaServer/MediaServerFiles/check$TORRENTID.txt
 
 sleep 60
