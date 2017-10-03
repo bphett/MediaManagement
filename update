@@ -6,6 +6,10 @@ if ! [ $(id -u) = 0 ]; then
    exit
 fi
 
-cd /var/samba/GitHub
-rm -f /var/samba/GitHub/*
-git fetch https://github.com/bphett/MediaManagement
+cd /srv/samba/GitHub
+#rm -rf /srv/samba/GitHub/*
+
+git reset --hard HEAD
+git clean -xffd
+git pull --depth=1
+#git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub
