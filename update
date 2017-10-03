@@ -1,0 +1,11 @@
+#!/bin/bash
+# This script updates the server files from GitHub.
+
+if ! [ $(id -u) = 0 ]; then
+   echo "Run this script as a root user."
+   exit
+fi
+
+cd /var/samba/GitHub
+rm -f /var/samba/GitHub/*
+git fetch https://github.com/bphett/MediaManagement
