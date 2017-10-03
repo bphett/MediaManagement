@@ -1,0 +1,24 @@
+#!/bin/bash
+# script to do initial install of media server on clean Ubuntu
+
+#Variables
+IFSOLD=$IFS
+curdir="$(dirname "$(readlink -f "$0")")"
+
+
+#Main Logic
+clear
+if ! [ $(id -u) = 0 ]; then
+   echo "Please run this installer as root."
+   echo
+   exit
+fi
+
+echo "Installing Media Server..."
+echo
+echo "Creating directories..."
+mkdir -p /var/samba/TV
+mkdir -p /var/samba/Movies
+echo "Copying scripts..."
+cp -Hr $curdir/home/* /home #copy home files
+cp -Hr $curdir/etc/* /etc #copy etc files

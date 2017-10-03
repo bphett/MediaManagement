@@ -3,3 +3,11 @@ install go
 install sickrage
 install couchpotato
 install transmission
+install apache
+mount /var/samba into /media/MediaServer/
+create directory structure
+- /var/samba/TV
+- /var/samba/Movies
+- 
+create a configuration file
+copy files
