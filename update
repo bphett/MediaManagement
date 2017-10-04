@@ -9,24 +9,20 @@ fi
 cd /srv/samba/GitHub
 rm -rf /srv/samba/GitHub/repo
 
-#git reset --hard HEAD
-#git clean -xffd
-#git pull --depth=1
-#wget https://github.com/bphett/MediaManagement/blob/master/update
 mkdir /srv/samba/GitHub/repo
 git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub/repo
 chmod -R 777 /srv/samba/GitHub
 
 if [ -d "/srv/samba/GitHub/repo/etc" ]; then
-cp -r /srv/samba/GitHub/repo/etc/* /etc
+cp -rf /srv/samba/GitHub/repo/etc/* /etc
 fi
 
 if [ -d "/srv/samba/GitHub/repo/home" ]; then
-cp -r /srv/samba/GitHub/repo/home/* /home
+cp -rf /srv/samba/GitHub/repo/home/* /home
 fi
 
 if [ -d "/srv/samba/GitHub/repo/opt" ]; then
-cp -r /srv/samba/GitHub/repo/opt/* /opt
+cp -rf /srv/samba/GitHub/repo/opt/* /opt
 fi
 
-cp -r /srv/samba/GitHub/repo/update /srv/samba/GitHub
+cp -rf /srv/samba/GitHub/repo/update /srv/samba/GitHub
