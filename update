@@ -15,6 +15,7 @@ rm -rf /srv/samba/GitHub/repo
 #wget https://github.com/bphett/MediaManagement/blob/master/update
 mkdir /srv/samba/GitHub/repo
 git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub/repo
+chmod -R 777 /srv/samba/GitHub
 
 if [ -d "/srv/samba/GitHub/repo/etc" ]; then
 cp -r /srv/samba/GitHub/repo/etc/* /etc
