@@ -1,6 +1,4 @@
-check for root
-create a configuration file
-prompt for config options
+make configure script
 install go
 install drive to /home/gopath/bin/
 configure drive
@@ -15,9 +13,3 @@ configure apache
 install samba
 configure samba
 mount /var/samba into /media/MediaServer/
-create directory structure
-- /var/samba/TV
-- /var/samba/Movies
-- /var/samba/GitHub
-copy update to /var/samba/GitHub
-run update
