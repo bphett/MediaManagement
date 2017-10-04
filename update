@@ -25,4 +25,8 @@ if [ -d "/srv/samba/GitHub/repo/home" ]; then
 cp -r /srv/samba/GitHub/repo/home/* /home
 fi
 
+if [ -d "/srv/samba/GitHub/repo/opt" ]; then
+cp -r /srv/samba/GitHub/repo/opt/* /opt
+fi
+
 cp -r /srv/samba/GitHub/repo/update /srv/samba/GitHub

@@ -24,8 +24,8 @@ echo "Preparing to install..."
 $curdir/configure
 
 echo "Upgrading packages before install..."
-#apt-get update
-#apt-get upgrade -y
+apt-get update
+apt-get upgrade -y
 echo -e "${GREEN}done${NC}"
 
 echo "Installing go..."
@@ -56,8 +56,6 @@ install -v -m755 unrar /usr/bin
 #pip install pyopenssl
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
 chown $currentuser:$currentuser -R /opt/sickrage
-echo "Ready to create default file and runscripts."
-read -p "Press [Enter] to continue..."
 echo "SR_USER=$currentuser
 SR_HOME=/opt/sickrage
 SR_DATA=/opt/sickrage
