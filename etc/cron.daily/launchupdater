@@ -1,0 +1,4 @@
+#!/bin/bash
+# This script calls the updater. It should be a cron job.
+
+/srv/samba/GitHub/update
