@@ -76,6 +76,7 @@ echo "Deleting empty folders..."'\r'
 
 find $PROCDIR/* -type d -empty -delete
 find $MOVEDIR/* -type d -empty -delete
+rm -f /media/MediaServer/MediaServerFiles/driverunning.txt
 
 echo " "'\r'
 echo " "'\r'
