@@ -7,9 +7,21 @@ if ! [ $(id -u) = 0 ]; then
 fi
 
 cd /srv/samba/GitHub
-#rm -rf /srv/samba/GitHub/*
+rm -rf /srv/samba/GitHub/repo
 
-git reset --hard HEAD
-git clean -xffd
-git pull --depth=1
-#git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub
+#git reset --hard HEAD
+#git clean -xffd
+#git pull --depth=1
+#wget https://github.com/bphett/MediaManagement/blob/master/update
+mkdir /srv/samba/GitHub/repo
+git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub/repo
+
+if [ -d "/srv/samba/GitHub/repo/etc" ]; then
+cp -r /srv/samba/GitHub/repo/etc/* /etc
+fi
+
+if [ -d "/srv/samba/GitHub/repo/home" ]; then
+cp -r /srv/samba/GitHub/repo/home/* /home
+fi
+
+cp -r /srv/samba/GitHub/repo/update /srv/samba/GitHub
