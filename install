@@ -6,6 +6,8 @@ IFSOLD=$IFS
 curdir="$(dirname "$(readlink -f "$0")")"
 GREEN='\033[0;32m'
 NC='\033[0m'
+currentuser="$(id -u -n)"
+
 
 #Main Logic
 clear
@@ -21,6 +23,11 @@ echo
 echo "Preparing to install..."
 $curdir/configure
 
+echo "Upgrading packages before install..."
+apt-get update
+apt-get upgrade -y
+echo -e "${GREEN}done${NC}"
+
 echo "Installing go..."
 gotest="$(echo $GOPATH)"
 if [ ! -d "/usr/local/go" ]; then
@@ -32,12 +39,45 @@ echo -e "${GREEN}done${NC}"
 
 echo "Setting up Google Drive..."
 if [ ! -e "$GOPATH/bin/drive" ]; then
-#TODO install drive
+#TODO install drive to /home/gopath/bin
 test="test"
 fi
 echo -e "${GREEN}done${NC}"
 
-#...
+echo "Setting up SickRage..."
+if [ ! -d "/opt/sickrage" ]; then
+apt-get install libxslt1-dev libxslt1.1 libxml2-dev libxml2 libssl-dev libffi-dev python-pip python-dev libssl-dev git -y
+apt-get install build-essential -y
+wget http://rarlab.com/rar/unrarsrc-5.2.7.tar-gz
+tar -xvf unrarsrc-5.2.7.tar.gz
+cd unrar
+make -f makefile
+install -v -m755 unrar /usr/bin
+pip install pyopenssl==0.14
+git clone https://github.com/SickRage/SickRage.git /opt/sickrage
+chown $currentuser:$currentuser -R /opt/sickrage
+echo 'SR_USER=$currentuser
+SR_HOME=/opt/sickrage
+SR_DATA=/opt/sickrage
+SR_PIDFILE=/home/$currentuser/.sickrage.pid' >/etc/default/sickrage
+cp /opt/sickrage/runscripts/init.ubuntu /etc/init.d/sickrage
+chmod +x /etc/init.d/sickrage
+update-rc.d sickrage defaults
+service sickrage start
+fi
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up CouchPotato..."
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up Transmission..."
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up Apache..."
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up Samba..."
+echo -e "${GREEN}done${NC}"
 
 echo "Setting up fstab..."
 string1="/var/samba /media/MediaServer none bind"
@@ -52,6 +92,7 @@ echo "Creating directories..."
 mkdir -p /var/samba/TV
 mkdir -p /var/samba/Movies
 mkdir -p /media/MediaServer
+mkdir -p /var/samba/MediaServerFiles
 echo -e "${GREEN}done${NC}"
 
 echo "Copying files..."
@@ -60,5 +101,9 @@ cp -Hr $curdir/update /var/samba/GitHub
 #cp -Hr $curdir/home/* /home #copy home files
 #cp -Hr $curdir/etc/* /etc #copy etc files
 echo -e "${GREEN}done${NC}"
+
+echo
+echo "We now need to reboot your system."
+read -p "Press [Enter] to reboot..."
 
 reboot
