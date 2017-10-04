@@ -1,0 +1,4 @@
+#!/bin/bash
+#This script calls the movie request subscript.
+
+/home/movierequests

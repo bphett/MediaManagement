@@ -1,0 +1,26 @@
+#!/bin/bash
+# script to configure media server settings
+# must be location independent!
+
+#Variables
+IFSOLD=$IFS
+curdir="$(dirname "$(readlink -f "$0")")"
+settings=/srv/samba/GitHub/settings
+
+
+#Main Logic
+if ! [ $(id -u) = 0 ]; then
+   echo "Please run this script as root."
+   echo
+   exit
+fi
+
+rm -f $settings
+if ! [ -d "/srv/samba/GitHub" ]; then
+mkdir -p /srv/samba/GitHub
+fi
+
+echo "#This file holds the configuration settings for the media server. Do not manually edit. Use the command /home/configure" >> $settings
+echo
+echo "Lets get your media server all set up."
+echo

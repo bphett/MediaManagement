@@ -1,0 +1,80 @@
+#!/bin/bash
+# This script adds movies to couchpotato and references the TMDB API.
+# Input should be in the form of a title with no year, or a TMDB ID with the prefix TMDB.
+# Example: Star Wars
+# Example: TMDB 7896678t
+
+input=`echo $1 | sed 's/ /+/g'`
+sofa_api="8c3d1078864741b4a11d29bd165c9020" #CouchPotato APIkey See $sofa_host/docs/
+sofa_host="http://localhost:5050" #Usually this.
+tmdb_api="933591b9b4cdc83522498a15bcc366fa"
+
+
+parse_imdb() {
+# If input prefix is TMDB, process as such.
+prefix="${input:0:4}"
+tmdbid="${input:5}"
+
+if [ ! $prefix == "TMDB" ]; then
+#Look up the TMDB ID.
+curlpath="https://api.themoviedb.org/3/search/movie?api_key=$tmdb_api&language=en-US&page=1&include_adult=true&query=$input"
+xml=$(curl -s $curlpath)
+tmdbid=$(echo $xml | sed 's/,"video".*//' | sed 's/^.*id"://')
+fi
+#Now pull the movie's info.
+curlpath="https://api.themoviedb.org/3/movie/$tmdbid?api_key=$tmdb_api"
+xml=$(curl -s $curlpath)
+imdbid=$(echo $xml | sed 's/","original_language.*//' | sed 's/^.*imdb_id":"//')
+imdb_title=$(echo $xml | sed 's/","video":.*//' | sed 's/^.*title":"//')
+couch_title=`echo $imdb_title | sed 's/ /+/g'`
+}
+
+
+check_exist() {
+exists="`curl -s \"$sofa_host/api/$sofa_api/media.get/?id=$imdbid\"`"
+#echo $exists > /media/MediaServer/exists.txt
+response=`echo $exists |awk -F "\"success\": " '{print $2}' |awk -F '}' '{print $1}'`
+if [ "$response" = "true" ]; then :;else echo "Movie $imdbid not found in CouchPotato Library."; fi
+#read $grepthis into $wishlist
+wishlist=""
+while read line; do wishlist="$wishlist$line|"; done < <(echo "$grepthis");wishlist=$(echo $wishlist | sed 's/.$//');wishlist=$(echo "@($wishlist)")
+shopt -s extglob
+case "$imdb_title" in
+        $wishlist)
+echo "$imdb_title ($imdbid) is already in your wishlist. Waiting for a release.";exit 0;;
+        *)
+echo "$imdb_title ($imdbid) is not in your wishlist."
+:;;
+esac
+}
+
+
+parse_sofa() {
+#check_exist
+xml="`curl -s \"$sofa_host/api/$sofa_api/movie.add/?force_readd=false&title=$couch_title&identifier=$imdbid\"`"
+status=`echo $xml |awk -F '{\"status\": ' '{print $2}' |awk -F "\"" '{print $2}'`
+case $status in
+        'done')
+        echo "$imdb_title is already in your library.";exit 1
+        ;;
+        'active')
+        echo "$imdb_title ($imdbid) has been added to your wishlist. Will be downloaded when a release is available."
+;;
+        *)
+        :
+esac
+}
+
+parse_list() {
+xml="`curl -s \"$sofa_host/api/$sofa_api/media.list/?status=active\"`"
+grepthis=`echo $xml |grep -Po '"original_title": ".+?(?=")' |awk -F ": \"" '{print $2}'`
+#echo "These titles are in your wishlist:"
+#echo "$grepthis"
+}
+
+
+if [ "$input" = "wishlist" ]; then parse_list;echo "These titles are in your wishlist:";echo "$grepthis";exit 0;else:;fi
+parse_imdb
+parse_list
+check_exist
+parse_sofa

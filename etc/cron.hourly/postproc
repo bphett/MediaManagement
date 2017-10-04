@@ -1,0 +1,107 @@
+#!/bin/bash
+# script to perform post-download processing on tv shows
+
+
+#Variables
+sendemail="0"
+declare -a exceptions
+declare -a files
+exceptionsfile=/media/MediaServer/MediaServerFiles/postexceptions.txt
+
+
+#More Stuff
+fileslist=/media/MediaServer/MediaServerFiles/fileslist.txt
+echo "::" > $fileslist
+find /media/MediaServer/NewFiles -type f -printf '%p::' >> $fileslist
+
+files=$(cat "$fileslist")
+tempfile=/media/MediaServer/MediaServerFiles/tempfile.txt
+exceptions=$(cat "$exceptionsfile")
+#echo $files > "/media/MediaServer/NewFiles/preexceptionlist.txt"
+IFSOLD=$IFS
+IFS=$'\n::'
+
+#filter out exceptions list
+for exclude in $exceptions; do
+   exclude=$(echo "$exclude" | sed "s/\r//")
+#echo "Exclude:-->$exclude<--"
+IFS=$IFSOLD
+files=$(echo $files | sed "s/::[^.]*\/media\/MediaServer\/NewFiles\/$exclude[^:]*::/::/g")
+files=$(echo $files | sed "s/::[^.]*\/media\/MediaServer\/NewFiles\/$exclude[^:]*::/::/")
+IFS=$'\n::'
+done
+
+#Start Processing
+
+for file in $files; do
+   file=$(echo "$file" | sed "s/\s*$//g" | sed -e "s/^[ \t]*//")
+   notfound="1"
+if [ "$file" != "" ]; then
+   filename=$(basename $file)
+   foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/NewFiles\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
+   foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
+   justshow=$(echo "$foldername" | sed "s/\/Season.*$//")
+   seasonname=$(echo "$foldername" | sed "s/$justshow//")
+   justshownoyear=$(echo "$justshow" | sed "s/ (.*)//")
+   foldernoyear=$(echo "$foldername" | sed "s/ (.*)//")
+   newfilepath="No destination folder found for $filename. Tried 'TV Shows/$justshow' and 'TV Shows/$justshownoyear'. justshow is '$justshow'. foldername is '$foldername'"
+  if [ -d "/media/MediaServer/TV Shows/$justshow" ]; then
+      newfilepath="/media/MediaServer/TV Shows/$foldername/$filename"
+   else
+      if [ -d "/media/MediaServer/TV Shows/$justshownoyear" ]; then
+         newfilepath="/media/MediaServer/TV Shows/$foldernoyear/$filename"
+      else
+         echo "$newfilepath"
+         notfound="0"
+      fi
+   fi
+   #If destination directory already exists; then
+   if [ $notfound = "1" ]; then
+      echo "newfilepath: '$newfilepath'"
+      #If there is not a file with the same name already at the destination; then
+      if [ ! -f "$newfilepath" ]; then
+         justpath=$(echo "$newfilepath" | sed "s/\/$filename//")
+         #If destination folder for season does not exist; then
+         if [ ! -d "$justpath" ]; then
+            mkdir -p "$justpath"
+         fi
+         mv "$file" "$newfilepath"
+         echo "$newfilepath:" >> /media/MediaServer/MediaServerFiles/gdrive.txt
+      else
+         sendemail="1"
+         #echo "$newfilepath:" >> /media/MediaServer/MediaServerFiles/gdrive.txt
+      fi
+   else
+      sendemail="1"
+   fi
+fi
+done
+IFS=$IFSOLD
+#echo $files > "/media/MediaServer/NewFiles/postexceptionlist.txt"
+
+#Moves movies, only if they don't exist on Plex.
+movies=()
+for movie in /media/MediaServer/NewFiles/Movies/*; do
+	title=$(echo "$movie" | sed "s/\/media\/MediaServer\/NewFiles\/Movies\///")
+	if [[ -d $movie ]];then
+		if [[ ! -d '/media/MediaServer/Movies/$title' ]];then
+			mv "$movie" "/media/MediaServer/Movies/$title"
+                        echo "/media/MediaServer/Movies/$title" >> /media/MediaServer/MediaServerFiles/gdrive.txt
+		fi
+	fi
+done
+
+message="Files on the Media Server require your review."
+
+if [ "$sendemail" = "1" ]; then
+curl -s \
+  --form-string "token=a1fztvt7r92esebqoxfbikm9ana4tq" \
+  --form-string "user=uv2kw1rwxrr962tz2z99tbcgkcagrh" \
+  --form-string "message=$message" \
+  https://api.pushover.net/1/messages.json
+fi
+
+#Delete Empty Folder
+find "/media/MediaServer/NewFiles" -type d -empty -delete
+# recreate /NewFiles if needed
+mkdir -p /media/MediaServer/NewFiles

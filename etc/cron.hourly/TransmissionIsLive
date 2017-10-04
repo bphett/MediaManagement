@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#Checks to see if Transmission is responding, and if not it restarts Transmission-daemon
+
+test="$(transmission-remote -n jaycee5585:jedihunter -l | grep "Sum:")"
+#test="$(echo "Testing 1.2.3")"
+#echo "test = ** $test **"
+
+if [ "$test" == "" ]
+	then
+		echo "Transmission is down."
+		echo "Restarting Transmission..."
+                #Notification "Transmission is down. Restarting it..."
+                curl -s \
+                  --form-string "token=a1fztvt7r92esebqoxfbikm9ana4tq" \
+                  --form-string "user=uv2kw1rwxrr962tz2z99tbcgkcagrh" \
+                  --form-string "message=Transmission is down. Restarting it..." \
+                  https://api.pushover.net/1/messages.json
+
+		timeout -k 45s /etc/init.d/transmission-daemon stop
+		/etc/init.d/transmission-daemon start
+		echo "Transmission has been restarted."
+	else
+		echo "Transmission is okay."
+fi

@@ -1,0 +1,64 @@
+#!/bin/bash
+# script to do initial install of media server on clean Ubuntu
+
+#Variables
+IFSOLD=$IFS
+curdir="$(dirname "$(readlink -f "$0")")"
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+#Main Logic
+clear
+if ! [ $(id -u) = 0 ]; then
+   echo "Please run this installer as root."
+   echo
+   exit
+fi
+
+echo "Installing Media Server..."
+echo
+
+echo "Preparing to install..."
+$curdir/configure
+
+echo "Installing go..."
+gotest="$(echo $GOPATH)"
+if [ ! -d "/usr/local/go" ]; then
+#TODO install go
+#TODO set path variable
+test="test"
+fi
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up Google Drive..."
+if [ ! -e "$GOPATH/bin/drive" ]; then
+#TODO install drive
+test="test"
+fi
+echo -e "${GREEN}done${NC}"
+
+#...
+
+echo "Setting up fstab..."
+string1="/var/samba /media/MediaServer none bind"
+if grep -qF "$string1" /etc/fstab;then
+   test="test"
+else
+   echo "$string1" >> /etc/fstab
+fi
+echo -e "${GREEN}done${NC}"
+
+echo "Creating directories..."
+mkdir -p /var/samba/TV
+mkdir -p /var/samba/Movies
+mkdir -p /media/MediaServer
+echo -e "${GREEN}done${NC}"
+
+echo "Copying files..."
+cp -Hr $curdir/update /var/samba/GitHub
+/var/samba/GitHub/update
+#cp -Hr $curdir/home/* /home #copy home files
+#cp -Hr $curdir/etc/* /etc #copy etc files
+echo -e "${GREEN}done${NC}"
+
+reboot

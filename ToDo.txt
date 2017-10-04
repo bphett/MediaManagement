@@ -1,0 +1,15 @@
+make configure script
+install go
+install drive to /home/gopath/bin/
+configure drive
+install sickrage
+configure sickrage
+install couchpotato
+configure couchpotato
+install transmission
+configure transmission
+install apache
+configure apache
+install samba
+configure samba
+mount /var/samba into /media/MediaServer/

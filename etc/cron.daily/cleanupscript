@@ -1,0 +1,58 @@
+#!/bin/bash
+#Script to loop through Media Server folders and delete orpaned files, then delete empty folders.
+# Added function to clean up inode and /boot.
+
+#Variables
+    MovieDirectory="/media/MediaServer/Movies"
+    TVDirectory="/media/MediaServer/TV Shows"
+    NewFiles="/media/MediaServer/NewFiles"
+
+#Movie Folder
+
+cd "$MovieDirectory"
+for filename in */ ; do
+    # sed $filename to remove trailing /
+    foldername=$(echo $filename | sed s'/.$//')
+    #For each folder, parse folder name as three variables - path (moviepath), name with year (movieandyear), and name without year (movie).
+    moviepath=$(echo "$MovieDirectory/$foldername")
+    movieandyear=$(echo $foldername)
+    movie=$(echo $foldername | sed 's/([^)]*)//g' | sed '/\s+$/s///')
+        #Check $moviepath for a file named $movieandyear, with an extension of .mkv,.mov,.wma,.mpg,.avi or .mp4.
+        if ! [ -e "${moviepath}/${movieandyear}.mkv" ] && ! [ -e "${moviepath}/${movieandyear}.mov" ] && ! [ -e "${moviepath}/${movieandyear}.wma" ] && ! [ -e "${moviepath}/${movieandyear}.mpg" ] && ! [ -e "${moviepath}/${movieandyear}.mp4" ] && ! [ -e "${moviepath}/${movieandyear}.avi" ]; then
+            #If it doesn't exist, Check $moviepath for a file named $movie, with an extension of .mkv,.mov,.wma,.mpg,.avi or .mp4.
+            if ! [ -e "${moviepath}/${movie}.mkv" ] && ! [ -e "${moviepath}/${movie}.mov" ] && ! [ -e "${moviepath}/${movie}.wma" ] && ! [ -e "${moviepath}/${movie}.mpg" ] && ! [ -e "${moviepath}/${movie}.mp4" ] && ! [ -e "${moviepath}/${movie}.avi" ]; then
+                #If it doesn't exist, delete the $moviepath directory, and all files and subdirectories in it.
+                rm -rf "$moviepath"
+            fi
+        fi
+done
+
+#TV Shows Folder
+
+cd "$TVDirectory"
+    #For each SRT file in folder or subfolders, parse filename as variable (srtfilename). Parse directory as (srtpath).
+shopt -s globstar
+for srtfilename in **/*.srt; do
+    srtpath="$(echo "$srtfilename" | sed 's/\(.*\)\/.*/\1/')"
+    #sed to get text before the first period and save to srtname.
+    srtname=$(echo "$srtfilename" | sed s'/.en.srt//' | sed s'/.eng.srt//' | sed s'/.srt//' | sed s"#$srtpath##" | sed s'/\///')
+        #Check $srtpath for a file named $srtname* with an extension of .mkv,.mov,.wma,.mpg,.avi, or .mp4.
+        if ! [ -e "${TVDirectory}/${srtpath}/${srtname}.mkv" ] && ! [ -e "${TVDirectory}/${srtpath}/${srtname}.mov" ] && ! [ -e "${TVDirectory}/${srtpath}/${srtname}.wma" ] && ! [ -e "${TVDirectory}/${srtpath}/${srtname}.mpg" ] && ! [ -e "${TVDirectory}/${srtpath}/${srtname}.mp4" ] && ! [ -e "${TVDirectory}/${srtpath}/${srtname}.avi" ]; then
+            #If it doesn't exist, delete $srtpath/$srtfilename
+            rm -rf "$TVDirectory/$srtfilename"
+        fi
+done
+    #Delete empty folders and subdirectories in TV Shows directory.
+    find "$TVDirectory" -type d -empty -delete
+    #Delete empty folders and subdirectories in NewFiles directory.
+    find "$NewFiles" -type d -empty -delete
+    #Recreate NewFiles directory if needed
+    if ! [ -e $NewFiles ]
+         mkdir $NewFiles
+    fi
+
+    # Clean up inode and /boot
+    apt-get update
+    apt-get -y dist-upgrade
+    apt-get -y autoremove
+    apt-get clean
