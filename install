@@ -80,7 +80,7 @@ echo "Setting up Samba..."
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up fstab..."
-string1="/var/samba /media/MediaServer none bind"
+string1="/srv/samba /media/MediaServer none bind"
 if grep -qF "$string1" /etc/fstab;then
    test="test"
 else
@@ -89,15 +89,15 @@ fi
 echo -e "${GREEN}done${NC}"
 
 echo "Creating directories..."
-mkdir -p /var/samba/TV
-mkdir -p /var/samba/Movies
+mkdir -p /srv/samba/TV
+mkdir -p /srv/samba/Movies
 mkdir -p /media/MediaServer
-mkdir -p /var/samba/MediaServerFiles
+mkdir -p /srv/samba/MediaServerFiles
 echo -e "${GREEN}done${NC}"
 
 echo "Copying files..."
-cp -Hr $curdir/update /var/samba/GitHub
-/var/samba/GitHub/update
+cp -Hr $curdir/update /srv/samba/GitHub
+/srv/samba/GitHub/update
 echo -e "${GREEN}done${NC}"
 
 echo
