@@ -53,7 +53,6 @@ tar -xvf unrarsrc-5.5.8.tar.gz
 cd unrar
 make -f makefile
 install -v -m755 unrar /usr/bin
-#pip install pyopenssl
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
 chown $currentuser:$currentuser -R /opt/sickrage
 echo "SR_USER=$currentuser
@@ -64,6 +63,7 @@ cp /opt/sickrage/runscripts/init.ubuntu /etc/init.d/sickrage
 chmod +x /etc/init.d/sickrage
 update-rc.d sickrage defaults
 service sickrage start
+service sickrage stop
 fi
 echo -e "${GREEN}done${NC}"
 
@@ -71,6 +71,9 @@ echo "Setting up CouchPotato..."
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Transmission..."
+apt-get install transmission-cli transmission-common transmission-daemon -y
+service transmission-daemon stop
+
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Apache..."
@@ -88,21 +91,41 @@ else
 fi
 echo -e "${GREEN}done${NC}"
 
+echo "Setting up Filebot..."
+add-apt-repository -y ppa:webupd8team/java
+apt-get update
+apt-get install oracle-java8-installer
+apt-get install oracle-java8-set-default
+wget -O filebot-i386.deb 'http://filebot.sourceforge.net/download.php?type=deb&arch=i386'
+dpkg --force-depends -i filebot-*.deb && rm filebot-*.deb
+echo -e "${GREEN}done${NC}"
+
 echo "Creating directories..."
 mkdir -p /srv/samba/TV
+chmod 777 /srv/samba/TV
 mkdir -p /srv/samba/Movies
+chmod 777 /srv/samba/Movies
 mkdir -p /media/MediaServer
+chmod 777 /media/MediaServer
 mkdir -p /srv/samba/MediaServerFiles
+chmod 777 /srv/samba/MediaServerFiles
 mkdir -p /srv/samba/MediaServerFiles/ActiveTorrents
+chmod 777 /srv/samba/MediaServerFiles/ActiveTorrents
 mkdir -p /srv/samba/MediaServerFiles/CompletedTorrents
+chmod 777 /srv/samba/MediaServerFiles/CompletedTorrents
 mkdir -p /srv/samba/MediaServerFiles/Delete
+chmod 777 /srv/samba/MediaServerFiles/Delete
 mkdir -p /srv/samba/MediaServerFiles/Logs
+chmod 777 /srv/samba/MediaServerFiles/Logs
 mkdir -p /srv/samba/MediaServerFiles/MSShared
+chmod 777 /srv/samba/MediaServerFiles/MSShared
 mkdir -p /srv/samba/MediaServerFiles/Processing
+chmod 777 /srv/samba/MediaServerFiles/Processing
 echo -e "${GREEN}done${NC}"
 
 echo "Copying files..."
 cp -Hr $curdir/update /srv/samba/GitHub
+chmod 777 /srv/samba/GitHub/update
 /srv/samba/GitHub/update
 echo -e "${GREEN}done${NC}"
 
