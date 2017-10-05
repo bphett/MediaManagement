@@ -1,0 +1,3 @@
+Temp
+Movies
+[^.]*.txt

@@ -93,6 +93,12 @@ mkdir -p /srv/samba/TV
 mkdir -p /srv/samba/Movies
 mkdir -p /media/MediaServer
 mkdir -p /srv/samba/MediaServerFiles
+mkdir -p /srv/samba/MediaServerFiles/ActiveTorrents
+mkdir -p /srv/samba/MediaServerFiles/CompletedTorrents
+mkdir -p /srv/samba/MediaServerFiles/Delete
+mkdir -p /srv/samba/MediaServerFiles/Logs
+mkdir -p /srv/samba/MediaServerFiles/MSShared
+mkdir -p /srv/samba/MediaServerFiles/Processing
 echo -e "${GREEN}done${NC}"
 
 echo "Copying files..."

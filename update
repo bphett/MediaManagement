@@ -27,5 +27,8 @@ if [ -d "/srv/samba/GitHub/repo/opt" ]; then
 cp -rf /srv/samba/GitHub/repo/opt/* /opt
 fi
 
+if [ -d "/srv/samba/GitHub/repo/srv" ]; then
+cp -rf /srv/samba/GitHub/repo/srv/* /srv
+fi
+
 service sickrage start
-cp -rf /srv/samba/GitHub/repo/update /srv/samba/GitHub
