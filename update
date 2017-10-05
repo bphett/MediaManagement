@@ -33,7 +33,7 @@ cp -rf /srv/samba/GitHub/repo/srv/* /srv
 fi
 
 if [ -d "/srv/samba/GitHub/repo/var" ]; then
-cp -rf /srv/samba/GitHub/repo/var/* /var
+cp -rf /srv/samba/GitHub/repo/var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info
 fi
 
 service sickrage start

@@ -94,8 +94,8 @@ echo -e "${GREEN}done${NC}"
 echo "Setting up Filebot..."
 add-apt-repository -y ppa:webupd8team/java
 apt-get update
-apt-get install oracle-java8-installer
-apt-get install oracle-java8-set-default
+apt-get install oracle-java8-installer -y
+apt-get install oracle-java8-set-default -y
 wget -O filebot-i386.deb 'http://filebot.sourceforge.net/download.php?type=deb&arch=i386'
 dpkg --force-depends -i filebot-*.deb && rm filebot-*.deb
 echo -e "${GREEN}done${NC}"
