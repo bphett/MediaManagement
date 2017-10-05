@@ -13,6 +13,8 @@ mkdir /srv/samba/GitHub/repo
 git clone --depth=1 https://github.com/bphett/MediaManagement /srv/samba/GitHub/repo
 chmod -R +x /srv/samba/GitHub/repo/
 
+service sickrage stop
+
 if [ -d "/srv/samba/GitHub/repo/etc" ]; then
 cp -rf /srv/samba/GitHub/repo/etc/* /etc
 fi
@@ -25,4 +27,5 @@ if [ -d "/srv/samba/GitHub/repo/opt" ]; then
 cp -rf /srv/samba/GitHub/repo/opt/* /opt
 fi
 
+service sickrage start
 cp -rf /srv/samba/GitHub/repo/update /srv/samba/GitHub
