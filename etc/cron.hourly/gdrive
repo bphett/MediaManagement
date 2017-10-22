@@ -21,10 +21,11 @@ if [ ! -f $runningfile ]; then
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/Movies\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
          file2=${file::-4}
-         /home/gopath/bin/drive push -quiet $file2*
+         /home/jason/gopath/bin/drive push -quiet $file2*
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile
+         rm -f $file2*
       fi
       #Determine if it is a show.
       if [[ $file == *"/TV Shows"* ]] && [ $file != "" ]; then
@@ -32,10 +33,11 @@ if [ ! -f $runningfile ]; then
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/TV Shows\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
          file2=${file::-4}
-         /home/gopath/bin/drive push -quiet $file2*
+         /home/jason/gopath/bin/drive push -quiet $file2*
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile
+         rm -f $file2*
       fi
    done
    rm $runningfile

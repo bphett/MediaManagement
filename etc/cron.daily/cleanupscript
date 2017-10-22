@@ -43,11 +43,11 @@ for srtfilename in **/*.srt; do
         fi
 done
     #Delete empty folders and subdirectories in TV Shows directory.
-    find "$TVDirectory" -type d -empty -delete
+    find "$TVDirectory" -mindepth 2 -type d -empty -delete
     #Delete empty folders and subdirectories in NewFiles directory.
     find "$NewFiles" -type d -empty -delete
     #Recreate NewFiles directory if needed
-    if ! [ -e $NewFiles ]
+    if ! [ -e $NewFiles ]; then
          mkdir $NewFiles
     fi
 
