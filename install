@@ -60,7 +60,6 @@ cd unrar
 make -f makefile
 install -v -m755 unrar /usr/bin
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
-chmod -R 777 /opt/sickrage
 adduser --disabled-password --gecos "" sickrage
 chown $sickrage:$sickrage -R /opt/sickrage
 echo "SR_USER=sickrage
@@ -73,6 +72,7 @@ rm -rf /opt/sickrage/sickbeard.db
 cp /home/sickbeard.db /opt/sickrage/sickbeard.db
 rm -rf /home/sickbeard.db
 fi
+chmod -R 777 /opt/sickrage
 chmod +x /etc/systemd/system/sickrage.service
 update-rc.d -f sickrage remove
 rm -rf /etc/init.d/sickrage
