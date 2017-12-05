@@ -59,7 +59,7 @@ chown $sickrage:$sickrage -R /opt/sickrage
 #chown $currentuser:$currentuser -R /opt/sickrage
 echo "SR_USER=sickrage
 SR_HOME=/opt/sickrage
-SR_DATA=/opt/sickrage >/etc/default/sickrage
+SR_DATA=/opt/sickrage" > /etc/default/sickrage
 rm -f /etc/init.d/sickrage
 rm -f /etc/systemd/system/sickrage.service
 cp /opt/sickrage/runscripts/init.systemd /etc/systemd/system/sickrage.service
@@ -153,6 +153,7 @@ echo -e "${GREEN}done${NC}"
 echo "Copying files..."
 cp -Hr $curdir/update /srv/samba/GitHub
 chmod 777 /srv/samba/GitHub/update
+rm -rf *.tar.gz*
 /srv/samba/GitHub/update
 echo -e "${GREEN}done${NC}"
 
