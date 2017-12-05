@@ -31,18 +31,24 @@ echo -e "${GREEN}done${NC}"
 echo "Installing go..."
 gotest="$(echo $GOPATH)"
 if [ ! -d "/usr/local/go" ]; then
-#TODO install go
-#TODO set path variable
-test="test"
+wget https://storage.googleapis.com/golang/go1.9.2.linux-386.tar.gz
+tar -C /usr/local -xzf go1.9.2.linux-386.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=\$HOME/gopath
+export PATH=\$GOPATH:\$GOPATH/bin:\$PATH
+echo "export GOPATH=\$HOME/gopath" >> /root/.bashrc
+echo "export GOPATH=\$HOME/gopath" >> ~/.bashrc
+echo "export PATH=\$GOPATH:\$GOPATH/bin:\$PATH" >> /root/.bashrc
+echo "export PATH=\$GOPATH:\$GOPATH/bin:\$PATH" >> ~/.bashrc
 fi
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Google Drive..."
 if [ ! -e "$GOPATH/bin/drive" ]; then
-#TODO install drive to /home/gopath/bin
-test="test"
+go get -u github.com/odeke-em/drive/cmd/drive
 fi
 echo -e "${GREEN}done${NC}"
+exit
 
 echo "Setting up SickRage..."
 if [ -f "/opt/sickrage/sickbeard.db" ]; then
@@ -79,6 +85,9 @@ rm -rf /etc/init.d/sickrage
 systemctl enable sickrage
 systemctl start sickrage
 systemctl stop sickrage
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up Jackett..."
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up CouchPotato..."
