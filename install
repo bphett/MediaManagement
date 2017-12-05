@@ -57,15 +57,17 @@ git clone https://github.com/SickRage/SickRage.git /opt/sickrage
 adduser --disabled-password --gecos "" sickrage
 chown $sickrage:$sickrage -R /opt/sickrage
 #chown $currentuser:$currentuser -R /opt/sickrage
-#echo "SR_USER=$currentuser
-#SR_HOME=/opt/sickrage
-#SR_DATA=/opt/sickrage
-#SR_PIDFILE=/home/$currentuser/.sickrage.pid" >/etc/default/sickrage
-cp /opt/sickrage/runscripts/init.ubuntu /etc/init.d/sickrage
-chmod +x /etc/init.d/sickrage
+echo "SR_USER=sickrage
+SR_HOME=/opt/sickrage
+SR_DATA=/opt/sickrage >/etc/default/sickrage
+rm -f /etc/init.d/sickrage
+rm -f /etc/systemd/system/sickrage.service
+cp /opt/sickrage/runscripts/init.systemd /etc/systemd/system/sickrage.service
+chmod +x /etc/systemd/system/sickrage.service
 update-rc.d sickrage defaults
-service sickrage start
-service sickrage stop
+systemctl enable sickrage
+systemctl start sickrage
+systemctl stop sickrage
 fi
 echo -e "${GREEN}done${NC}"
 
@@ -103,7 +105,7 @@ pip install stevedore==1.19.1
 pip install qtfaststart
 rm -rf /home/mp4_automator
 mkdir /home/mp4_automator
-git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator
+git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator /home/mp4_automator
 chmod -R 777 /home/mp4_automator
 echo -e "${GREEN}done${NC}"
 
