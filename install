@@ -60,7 +60,7 @@ cd unrar
 make -f makefile
 install -v -m755 unrar /usr/bin
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
-chmod 777 /opt/sickrage
+chmod -R 777 /opt/sickrage
 adduser --disabled-password --gecos "" sickrage
 chown $sickrage:$sickrage -R /opt/sickrage
 echo "SR_USER=sickrage
