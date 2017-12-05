@@ -47,6 +47,8 @@ echo -e "${GREEN}done${NC}"
 echo "Setting up SickRage..."
 if [ -f "/opt/sickrage/sickbeard.db" ]; then
 cp /opt/sickrage/sickbeard.db /home/sickbeard.db
+systemctl stop sickrage
+system sickrage stop
 fi
 rm -rf /opt/sickrage
 apt-get install libxslt1-dev libxslt1.1 libxml2-dev libxml2 libssl-dev libffi-dev python-pip python-dev libssl-dev git -y
@@ -65,7 +67,9 @@ SR_DATA=/opt/sickrage" > /etc/default/sickrage
 rm -f /etc/systemd/system/sickrage.service
 cp /opt/sickrage/runscripts/init.systemd /etc/systemd/system/sickrage.service
 if [ -f "/home/sickbeard.db" ]; then
-yes | cp -rf /home/sickbeard.db /opt/sickrage/sickbeard.db
+rm -rf /opt/sickrage/sickbeard.db
+cp /home/sickbeard.db /opt/sickrage/sickbeard.db
+rm -rf /home/sickbeard.db
 fi
 chmod +x /etc/systemd/system/sickrage.service
 update-rc.d -f sickrage remove
