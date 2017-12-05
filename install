@@ -82,7 +82,7 @@ echo "Setting up Samba..."
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up ffmpeg..."
-apt-get install ffmpeg
+apt-get install ffmpeg -y
 echo -e "${GREEN}done${NC}"
 
 echo "Updating python tools..."
@@ -96,7 +96,7 @@ pip install requests-cache
 pip install babelfish
 pip install "guessit<2"
 pip install "subliminal<2"
-pip uninstall stevedore
+pip uninstall --yes stevedore
 pip install stevedore==1.19.1
 pip install qtfaststart
 rm -rf /home/mp4_automator
