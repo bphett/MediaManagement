@@ -54,11 +54,13 @@ cd unrar
 make -f makefile
 install -v -m755 unrar /usr/bin
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
-chown $currentuser:$currentuser -R /opt/sickrage
-echo "SR_USER=$currentuser
-SR_HOME=/opt/sickrage
-SR_DATA=/opt/sickrage
-SR_PIDFILE=/home/$currentuser/.sickrage.pid" >/etc/default/sickrage
+adduser --disabled-password --gecos "" sickrage
+chown $sickrage:$sickrage -R /opt/sickrage
+#chown $currentuser:$currentuser -R /opt/sickrage
+#echo "SR_USER=$currentuser
+#SR_HOME=/opt/sickrage
+#SR_DATA=/opt/sickrage
+#SR_PIDFILE=/home/$currentuser/.sickrage.pid" >/etc/default/sickrage
 cp /opt/sickrage/runscripts/init.ubuntu /etc/init.d/sickrage
 chmod +x /etc/init.d/sickrage
 update-rc.d sickrage defaults
