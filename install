@@ -73,13 +73,36 @@ echo -e "${GREEN}done${NC}"
 echo "Setting up Transmission..."
 apt-get install transmission-cli transmission-common transmission-daemon -y
 service transmission-daemon stop
-
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Apache..."
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Samba..."
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up ffmpeg..."
+apt-get install ffmpeg
+echo -e "${GREEN}done${NC}"
+
+echo "Updating python tools..."
+python -m pip install --upgrade pip setuptools wheel
+echo -e "${GREEN}done${NC}"
+
+echo "Setting up mp4_automator..."
+pip install requests
+pip install requests[security]
+pip install requests-cache
+pip install babelfish
+pip install "guessit<2"
+pip install "subliminal<2"
+pip uninstall stevedore
+pip install stevedore==1.19.1
+pip install qtfaststart
+rm -rf /home/mp4_automator
+mkdir /home/mp4_automator
+git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator
+chmod -R 777 /home/mp4_automator
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up fstab..."

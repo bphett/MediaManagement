@@ -1,0 +1,54 @@
+#!/bin/bash
+# script to perform post-download processing on tv shows
+
+
+#Variables
+sendemail="0"
+declare -a exceptions
+declare -a files
+exceptions=$(cat "$exceptionsfile")
+IFSOLD=$IFS
+
+#More Stuff
+fileslist=/media/MediaServer/MediaServerFiles/fileslist.txt
+echo "::" > $fileslist
+find /media/MediaServer/NewFiles/Shows -type f -printf '%p::' >> $fileslist
+
+files=$(cat "$fileslist")
+tempfile=/media/MediaServer/MediaServerFiles/tempfile.txt
+
+
+#Start Processing
+
+#Moves movies, only if they don't exist on Plex.
+movies=()
+for movie in /media/MediaServer/NewFiles/Movies/*; do
+	title=$(echo "$movie" | sed "s/\/media\/MediaServer\/NewFiles\/Movies\///")
+	if [[ -d $movie ]];then
+		if [[ ! -d '/media/MediaServer/Movies/$title' ]];then
+                   mv "$movie" "/media/MediaServer/Movies/$title"
+#                   echo "/media/MediaServer/Movies/$title" >> /media/MediaServer/MediaServerFiles/gdrive.txt
+		fi
+	fi
+done
+
+#Delete Empty Folders
+find "/media/MediaServer/NewFiles" -type d -empty -delete
+
+# recreate /NewFiles if needed
+mkdir -p /media/MediaServer/NewFiles
+
+#Sends notification, if needed
+if [ -d "/media/MediaServer/NewFiles/*" ]; then
+   message="Files on the Media Server require your review."
+   if [ "$sendemail" = "1" ]; then
+   curl -s \
+     --form-string "token=a1fztvt7r92esebqoxfbikm9ana4tq" \
+     --form-string "user=uv2kw1rwxrr962tz2z99tbcgkcagrh" \
+     --form-string "message=$message" \
+     https://api.pushover.net/1/messages.json
+   fi
+fi
+
+#Starts GDrive sync
+/home/gdrive &

@@ -1,6 +1,5 @@
 #!/bin/sh
-# script to check for complete torrents in transmission folder, then
-# stop and move them
+# This script runs at every boot.
 
 # either hard-code the MOVEDIR variable here…
 MOVEDIR=/media/MediaServer/MediaServerFiles/CompletedTorrents # the folder to move completed downloads to
@@ -77,10 +76,14 @@ echo "Deleting empty folders..."'\r'
 find $PROCDIR/* -type d -empty -delete
 find $MOVEDIR/* -type d -empty -delete
 rm -f /media/MediaServer/MediaServerFiles/driverunning.txt
+rm -f /media/MediaServer/MediaServerFiles/transcoding.txt
+find /media/MediaServer/NewFiles/* -type d -empty -delete
+find /media/MediaServer/Movies/* -type d -empty -delete
+find /media/MediaServer/TV Shows/* -type d -empty -delete
 
 echo " "'\r'
 echo " "'\r'
 
 /home/torrentcleanup
-/etc/cron.hourly/postproc
-/home/movielist
+/home/postproc
+#/home/movielist

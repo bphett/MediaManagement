@@ -1,0 +1,4 @@
+#!/bin/sh
+# script to start gdrive sync hourly
+
+/home/gdrive

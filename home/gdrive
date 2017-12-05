@@ -1,0 +1,78 @@
+#!/bin/bash
+# script to push new files to google drive
+
+
+#Variables
+gdrivefile=/media/MediaServer/MediaServerFiles/gdrive.txt
+gdrivequeue=$(cat $gdrivefile)
+runningfile=/media/MediaServer/MediaServerFiles/driverunning.txt
+IFSOLD=$IFS
+
+if [ ! -f $runningfile ]; then
+
+#Sync MSShared Files
+/home/jason/gopath/bin/drive pull -quiet /media/MediaServer/MediaServerFiles/MSShared
+
+/home/movierequests
+/home/showrequests
+
+rm -f /media/MediaServer/MediaServerFiles/MSShared/*.txt
+cp /media/MediaServer/MediaServerFiles/blank.txt /media/MediaServer/MediaServerFiles/MSShared/seriesrequests.txt
+cp /media/MediaServer/MediaServerFiles/blank.txt /media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
+/home/jason/gopath/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/seriesrequests.txt
+/home/jason/gopath/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
+
+
+IFS=$'\n:'
+#Create queue
+rm -f $gdrivefile
+for file in $(find "/media/MediaServer/TV Shows" -type f -name "*.srt"); do
+    echo "$file:" >> $gdrivefile
+done
+for file in $(find "/media/MediaServer/TV Shows" -type f -name "*.mp4"); do
+    echo "$file:" >> $gdrivefile
+done
+for file in $(find "/media/MediaServer/Movies" -type f); do
+    echo "$file:" >> $gdrivefile
+done
+
+#Start Upload
+   echo "Running" >> $runningfile
+   for file in $gdrivequeue; do
+      filename=$(basename $file)
+      #Determine if it is a movie.
+      if [[ $file == *"/Movies/"* ]]; then
+         echo "Movie is: $file"
+         foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/Movies\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
+         foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
+#         file2=${file::-4}
+         /home/jason/gopath/bin/drive push -quiet $file
+         sed -e 's,'"$file"',,g' -i $gdrivefile
+         sed -e 's/^:*//' -i $gdrivefile
+         chmod a+w $gdrivefile
+         rm -f $file
+      fi
+      #Determine if it is a show.
+      if [[ $file == *"/TV Shows"* ]] && [ $file != "" ]; then
+         echo "Show is: $file"
+         foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/TV Shows\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
+         foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
+#         file2=${file::-4}
+         /home/jason/gopath/bin/drive push -quiet $file
+         sed -e 's,'"$file"',,g' -i $gdrivefile
+         sed -e 's/^:*//' -i $gdrivefile
+         chmod a+w $gdrivefile
+         rm -f $file
+      fi
+   done
+   rm $runningfile
+
+IFS=$IFSOLD
+
+
+else
+    echo "GDrive is already being synced."
+fi
+
+
+exit
