@@ -50,6 +50,7 @@ cp /opt/sickrage/sickbeard.db /home/sickbeard.db
 systemctl stop sickrage
 system sickrage stop
 fi
+pip install -U pyopenssl
 rm -rf /opt/sickrage
 apt-get install libxslt1-dev libxslt1.1 libxml2-dev libxml2 libssl-dev libffi-dev python-pip python-dev libssl-dev git -y
 apt-get install build-essential -y
@@ -59,6 +60,7 @@ cd unrar
 make -f makefile
 install -v -m755 unrar /usr/bin
 git clone https://github.com/SickRage/SickRage.git /opt/sickrage
+chmod 777 /opt/sickrage
 adduser --disabled-password --gecos "" sickrage
 chown $sickrage:$sickrage -R /opt/sickrage
 echo "SR_USER=sickrage
