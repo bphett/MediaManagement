@@ -3,6 +3,7 @@
 
 
 #Variables
+GOPATH=/usr/lib/go-1.9
 gdrivefile=/media/MediaServer/MediaServerFiles/gdrive.txt
 gdrivequeue=$(cat $gdrivefile)
 runningfile=/media/MediaServer/MediaServerFiles/driverunning.txt
@@ -11,7 +12,7 @@ IFSOLD=$IFS
 if [ ! -f $runningfile ]; then
 
 #Sync MSShared Files
-/home/jason/gopath/bin/drive pull -quiet /media/MediaServer/MediaServerFiles/MSShared
+$GOPATH/bin/drive pull -quiet /media/MediaServer/MediaServerFiles/MSShared
 
 /home/movierequests
 /home/showrequests
@@ -19,8 +20,8 @@ if [ ! -f $runningfile ]; then
 rm -f /media/MediaServer/MediaServerFiles/MSShared/*.txt
 cp /media/MediaServer/MediaServerFiles/blank.txt /media/MediaServer/MediaServerFiles/MSShared/seriesrequests.txt
 cp /media/MediaServer/MediaServerFiles/blank.txt /media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
-/home/jason/gopath/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/seriesrequests.txt
-/home/jason/gopath/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
+$GOPATH/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/seriesrequests.txt
+$GOPATH/bin/drive push -quiet /media/MediaServer/MediaServerFiles/MSShared/movierequests.txt
 
 
 IFS=$'\n:'
@@ -46,7 +47,7 @@ done
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/Movies\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
 #         file2=${file::-4}
-         /home/jason/gopath/bin/drive push -quiet $file
+         $GOPATH/bin/drive push -quiet $file
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile
@@ -58,7 +59,7 @@ done
          foldername=$(echo "$file" | sed "s/\/media\/MediaServer\/TV Shows\///" | sed "s/\/$filename//" | sed -e "s/^[ \t]*//")
          foldername=$(echo "$foldername" | sed "s/\([(][^)]*[)]\)\(.*\)\([(][^)]*[)]\)/\1/")
 #         file2=${file::-4}
-         /home/jason/gopath/bin/drive push -quiet $file
+         $GOPATH/bin/drive push -quiet $file
          sed -e 's,'"$file"',,g' -i $gdrivefile
          sed -e 's/^:*//' -i $gdrivefile
          chmod a+w $gdrivefile
