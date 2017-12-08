@@ -35,11 +35,11 @@ apt-get install golang-1.9-go -y
 echo -e "${GREEN}done${NC}"
 
 echo "Setting up Google Drive..."
-if [ ! -e "$GOPATH/bin/drive" ]; then
+if [ ! -e "/usr/lib/go-1.9/bin/drive" ]; then
+echo "This may take a while..."
 /usr/lib/go-1.9/bin/go get -u github.com/odeke-em/drive/cmd/drive
 fi
 echo -e "${GREEN}done${NC}"
-exit
 
 echo "Setting up SickRage..."
 if [ -f "/opt/sickrage/sickbeard.db" ]; then
